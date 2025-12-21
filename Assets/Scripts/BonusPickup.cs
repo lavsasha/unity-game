@@ -39,9 +39,14 @@ public class BonusPickup : MonoBehaviour
         {
             case BonusType.Heal:
                 ph.Heal(healAmount);
+                if (ScoreManager.Instance != null)
+                    ScoreManager.Instance.AddHealBonusScore();
                 break;
+                
             case BonusType.Invulnerability:
                 ph.MakeInvulnerable(invulnerabilitySeconds);
+                if (ScoreManager.Instance != null)
+                    ScoreManager.Instance.AddInvulnerabilityBonusScore();
                 break;
         }
 

@@ -3,7 +3,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
 public class PlayerHealth : MonoBehaviour
-{
+{   
+    private Animator animator;
     public int maxHealth = 5;
     public MonoBehaviour movementScript;
 
@@ -29,6 +30,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
+        animator = GetComponent<Animator>();
         currentHealth = maxHealth;
         UIManager.Instance?.UpdateHealth(currentHealth, maxHealth);
     }
@@ -37,6 +39,8 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isDead) return;
         if (isInvulnerable) return;
+
+        animator.SetTrigger("Damage");
 
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -50,6 +54,8 @@ public class PlayerHealth : MonoBehaviour
     public void Heal(int amount)
     {
         if (isDead) return;
+
+        animator.SetTrigger("HealBonus");
 
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -66,12 +72,18 @@ public class PlayerHealth : MonoBehaviour
     IEnumerator InvulnerabilityRoutine(float seconds)
     {
         isInvulnerable = true;
+
+        animator.SetBool("IsInvulnerable", true);
+
         if (cachedRenderer != null)
             cachedRenderer.material.color = invulnerableColor;
 
         yield return new WaitForSeconds(seconds);
 
         isInvulnerable = false;
+
+        animator.SetBool("IsInvulnerable", false);
+
         if (cachedRenderer != null)
             cachedRenderer.material.color = originalColor;
 
